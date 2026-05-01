@@ -1,0 +1,43 @@
+﻿<div class="container-fluid py-4 px-4">
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="text-primary fw-bold mb-0">
+                        <i class="bi bi-receipt-cutoff me-2"></i>Order Management
+                    </h2>
+                    <p class="text-muted small mb-0">Manage and track all customer transactions</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        <div class="table-responsive">
+            <table id="tblData" class="table table-hover align-middle custom-table" style="width:100%">
+                <thead class="table-light">
+                    <tr class="text-secondary">
+                        <th class="border-0">Order ID</th>
+                        <th class="border-0">Date</th>
+                        <th class="border-0">Customer</th>
+                        <th class="border-0 text-center">Status</th>
+                        <th class="border-0 text-end">Total Amount</th>
+                        <th class="border-0 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tfoot class="bg-light fw-bold">
+                    <tr>
+                        <td colspan="4" class="text-end border-0">Grand Total:</td>
+                        <td id="totalCell" class="text-end border-0 text-primary"></td>
+                        <td class="border-0"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+</div>
+
+@section scripts {
+    <script src="~/js//AllOrder.js"></script>
+}

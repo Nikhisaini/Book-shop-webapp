@@ -1,0 +1,56 @@
+﻿<div class="container-fluid py-4 px-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="text-primary fw-bold mb-0">
+                <i class="bi bi-calendar3-event me-2"></i>Order Search by Date
+            </h2>
+            <p class="text-muted small mb-0">Specify a date range and status to filter your records.</p>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 mb-0">
+        <div class="card-body p-4">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label>From Date</label>
+                    <input type="date" id="fromDate" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label>To Date</label>
+                    <input type="date" id="toDate" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label>Status</label>
+                    <select id="status" class="form-control">
+                        <option value="All">All Status</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button class="btn btn-primary w-100" onclick="filterByDate()">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="tableContainer" style="display:none;" class="table-responsive">
+        <table id="tblData" class="table table-hover align-middle custom-table" style="width:100%">
+            <thead class="table-light">
+                <tr class="text-secondary">
+                    <th class="border-0">Order ID</th>
+                    <th class="border-0">Date</th>
+                    <th class="border-0">Customer</th>
+                    <th class="border-0 text-center">Status</th>
+                    <th class="border-0 text-end"> Total Amount</th>
+                    <th class="border-0 text-center">Action</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+@section scripts {
+    <script src="~/js/DateWiseOrder.js"></script>
+}

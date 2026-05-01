@@ -1,0 +1,214 @@
+﻿@using Microsoft.Extensions.Options
+@model Ecomm_project_1.Models.ViewModels.ShoppingCartVM
+@inject IOptions<Ecomm_project_1.Utility.StripeSettings> Stripe;
+@inject IOptions<Ecomm_project_1.Utility.RazorpaySettings> Razorpay;
+<form method="post" id="paymentForm">
+    <br />
+    <div class="backgroundWhiteBorder">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-dark text-light ml-0 row container">
+                    <div class="col-6">
+                        <i class="fa fa-shopping-cart"></i> &nbsp;
+                        Order Summary
+                    </div>
+                    <div class="col-6 text-right">
+                        <a asp-action="Index" class="btn btn-outline-info btn-sm">Back to Cart</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="container rounded p-2">
+                        <div class="row">
+                            <div class="col-12 col-lg-6 pb-4">
+                                <div class="row">
+                                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="text-info">PickUp Details:</span>
+                                    </h4>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>Name</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input asp-for="@Model.OrderHeader.Name" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>Phone</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input asp-for="@Model.OrderHeader.PhoneNumber" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>Street Address</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input asp-for="@Model.OrderHeader.StreetAddress" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>City</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input asp-for="@Model.OrderHeader.City" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>State</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input asp-for="@Model.OrderHeader.State" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="row my-1">
+                                    <div class="col-3">
+                                        <label>Postal Code</label>
+                                    </div>
+                                    <div class="col-9">
+                                        <input asp-for="@Model.OrderHeader.PostalCode" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                           
+                            <div class="col-12 col-lg-5 offset-lg-1">
+                                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-info">Order Summary:</span>
+                                </h4>
+                                <ul class="list-group mb-3 scroll-container">
+                                   
+                                    @foreach (var user in Model.ListCart)
+                                    {
+                                        <li class="list-group-item d-flex justify-content-between ">
+                                            <div>
+                                                <h6 class="my-0">@user.product.Title</h6>
+                                                <small class="text-muted">Quantity: @user.Count</small>
+                                            </div>
+                                            <span class="text-muted">₹ @(user.Price * user.Count)</span>
+                                        </li>
+                                    }
+                                   
+                                </ul>
+                                <ul class="list-group mb-3">
+                                    <li class="list-group-item d-flex justify-content-between bg-light">
+                                        <small class="text-info">Total (INR)</small>
+                                        <strong class="text-info">₹ @Model.OrderHeader.OrderTotal</strong>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-12 col-md-8 pt-2">
+                            <p style="color:maroon; font-size:14px;">Estimate Arrival Date: @DateTime.Now.AddDays(7).ToShortDateString() - @DateTime.Now.AddDays(14).ToShortDateString()</p>
+                        </div>
+                        
+                        <div class="col-12 col-md-4">
+                            @{
+                                var ordertotalammount = Model.OrderHeader.OrderTotal * 100;
+                            }
+     
+                            <script src="https://checkout.stripe.com/checkout.js"
+                                    class="stripe-button"
+                                    data-key="@Stripe.Value.PublishableKey"
+                                    data-amount="@ordertotalammount"
+                                    data-name="Book Shopping Project"
+                                    data-description="Get Book For Testing"
+                                    data-locale="auto"
+                                    data-label="Place Order"
+                                    data-allow-remeber-me="false"
+                                    data-image="https://stripe.com/img/documentation/checkout/marketplace.png">
+                            </script>
+                            <button type="button" id="btnStripe" class="btn btn-primary form-control mb-2">
+                                Pay with Stripe
+                            </button>
+                            <script>
+
+                               var stripeEl = document.getElementsByClassName("stripe-button-el");
+                               if (stripeEl[0]) stripeEl[0].style.display = "none";
+                               document.getElementById("btnStripe").addEventListener("click", function () {
+                               stripeEl[0].click();
+                               });
+                            </script>
+
+                            <button type="button" id="btnRazorpay" class="btn btn-success form-control">
+                                Pay with Razorpay
+                            </button>
+
+                            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+                            <script>
+                                var rzpOptions = {
+                                "key": "@Razorpay.Value.KeyId",
+                                "amount": "@ordertotalammount",
+                                "currency": "INR",
+                                "name": "Book Shopping Project",
+                                "description": "Get Book For Testing",
+                                "config": {
+                                "display": {
+                                "blocks": {
+                                "upi": {
+                                "name": "Pay via QR or UPI",
+                                "instruments": [
+                                {
+                                "method": "upi"
+                                }
+                                ]
+                                }
+                                },
+                                "sequence": ["block.upi"],
+                                "preferences": {
+                                "show_default_blocks": true
+                                }
+                                }
+                                },
+
+                                handler: function (response) {
+                                var f = document.createElement("form");
+                                f.method = "POST";
+                                f.action = "/Customer/Cart/RazorpayCheckOut";
+
+                                var existingInputs = document.querySelectorAll('#paymentForm input, #paymentForm select');
+                                existingInputs.forEach(function (input) {
+                                var copy = document.createElement("input");
+                                copy.type = "hidden";
+                                copy.name = input.name;
+                                copy.value = input.value;
+                                f.appendChild(copy);
+                                });
+
+                                var p = document.createElement("input");
+                                p.type = "hidden";
+                                p.name = "transactionId";
+                                p.value = response.razorpay_payment_id;
+                                f.appendChild(p);
+
+                                document.body.appendChild(f);
+                                f.submit();
+                                },
+                                modal: {
+                                ondismiss: function () {
+                                alert("Payment cancelled.");
+                                }
+                                },
+                                theme: { color: "#28a745" }
+                                };
+
+                                document.getElementById("btnRazorpay").addEventListener("click", function () {
+                                var rzp = new Razorpay(rzpOptions);
+                                rzp.open();
+                                });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

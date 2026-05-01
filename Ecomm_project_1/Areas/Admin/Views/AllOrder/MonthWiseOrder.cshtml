@@ -1,0 +1,60 @@
+﻿<div class="container-fluid py-4 px-4">
+    <div class="mb-4">
+        <h2 class="text-primary fw-bold mb-0">Month Wise Orders</h2>
+        <p class="text-muted small">Filter orders by selecting a specific month of the current year</p>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 mb-3">
+        <div class="card-body p-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label text-dark text-uppercase small fw-bold">Filter by Month:</label>
+                    <select id="monthSelect" class="form-control border-1 bg-white rounded-2 shadow-none">
+                        <option value="0">All Months</option>
+                        <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100 rounded-2" onclick="loadMonthData()">
+                        Filter
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+            <div id="tablesContainer" class="table-responsive">
+                <table id="tblMonthData" class="table table-hover align-middle custom-table w-100">
+                    <thead class="bg-light">
+                        <tr class="text-secondary small text-uppercase fw-bold">
+                            <th class="border-0 px-4 py-3">Order ID</th>
+                            <th class="border-0 py-3">Date</th>
+                            <th class="border-0 py-3">Customer</th>
+                            <th class="border-0 py-3">Status</th>
+                            <th class="border-0 py-3">Total Amount</th>
+                            <th class="border-0 py-3 text-center px-4">Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/MonthWiseOrder.js"></script>
+}

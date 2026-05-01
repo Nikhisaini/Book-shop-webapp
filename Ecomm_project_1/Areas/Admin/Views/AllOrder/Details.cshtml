@@ -1,0 +1,146 @@
+﻿@model Ecomm_project_1.Models.ViewModels.OrderDetailVM
+@{
+    ViewData["Title"] = "Order #" + Model.OrderHeader.Id;
+}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+<div class="od-page">
+    <h1 class="page-title">Order #@Model.OrderHeader.Id</h1>
+    <p class="page-sub">
+        Placed on @Model.OrderHeader.OrderDate.ToString("MMMM dd, yyyy · hh:mm tt")
+    </p>
+    <div class="od-grid">
+        <div>
+            <div class="od-card">
+                <p class="od-card-title">Items Ordered</p>
+                <table class="prod-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th style="text-align:center">Qty</th>
+                            <th style="text-align:right">Unit Price</th>
+                            <th style="text-align:right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderDetails)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="prod-name-cell">
+                                        <div class="prod-img-wrap">
+                                            <img src="@item.product.ImageUrl" alt="@item.product.Title" />
+                                        </div>
+                                        <div>
+                                            <p class="prod-name">@item.product.Title</p>
+                                            <p class="prod-author">by @item.product.Author</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="text-align:center">
+                                    <span class="qty-pill">×@item.Count</span>
+                                </td>
+                                <td style="text-align:right; color:var(--muted)">
+                                    ₹@item.Price.ToString("0.00")
+                                </td>
+                                <td style="text-align:right; font-weight:500; color:var(--ink)">
+                                    ₹@((item.Price * item.Count).ToString("0.00"))
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:1.25rem;">
+
+            <div class="od-card">
+                <p class="od-card-title">Order Summary</p>
+                @{
+                    decimal subtotal = (decimal)Model.OrderDetails.Sum(d => d.Price * d.Count);
+                }
+                <div class="summary-row">
+                    <span class="lbl">Subtotal</span>
+                    <span class="val">₹@subtotal.ToString("0.00")</span>
+                </div>
+                <div class="summary-row">
+                    <span class="lbl">Shipping</span>
+                    <span class="val" style="color:var(--success)">Free</span>
+                </div>
+                <hr class="summary-divider" />
+                <div class="summary-row summary-total">
+                    <span class="lbl" style="color:var(--ink)">Total</span>
+                    <span class="val">₹@Model.OrderHeader.OrderTotal.ToString("0.00")</span>
+                </div>
+            </div>
+            <div class="od-card">
+                <p class="od-card-title">Order Info</p>
+                <div class="info-row">
+                    <span class="info-label">Status</span>
+                    <span>
+                        @{
+                            string statusClass = Model.OrderHeader.OrderStatus?.ToLower() switch
+                            {
+                                "approved" => "status-approved",
+                                "pending" => "status-pending",
+                                "cancelled" => "status-cancelled",
+                                "processing" => "status-processing",
+                                "shipped" => "status-shipped",
+                                _ => "status-pending"
+                            };
+                        }
+                        <span class="status-badge @statusClass">@Model.OrderHeader.OrderStatus</span>
+                    </span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Customer</span>
+                    <span class="info-value">@Model.OrderHeader.Name</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Phone</span>
+                    <span class="info-value">@Model.OrderHeader.PhoneNumber</span>
+                </div>
+
+                <div class="info-row">
+                    <span class="info-label">Email</span>
+                    <span class="info-value" style="font-size:0.82rem">@Model.OrderHeader.applicationUser?.Email</span>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.OrderHeader.StreetAddress))
+                {
+                    <div class="info-row">
+                        <span class="info-label">Address</span>
+                        <span class="info-value">
+                            @Model.OrderHeader.StreetAddress,<br />
+                            @Model.OrderHeader.City, @Model.OrderHeader.State @Model.OrderHeader.PostalCode
+                        </span>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.OrderHeader.TrackingNumber))
+                {
+                    <div class="info-row">
+                        <span class="info-label">Tracking #</span>
+                        <span class="info-value" style="color:var(--accent)">@Model.OrderHeader.TrackingNumber</span>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model.OrderHeader.Carrier))
+                {
+                    <div class="info-row">
+                        <span class="info-label">Carrier</span>
+                        <span class="info-value">@Model.OrderHeader.Carrier</span>
+                    </div>
+                }
+                @if (Model.OrderHeader.OrderStatus != "Cancelled")
+                {
+                    <a asp-action="Cancel" asp-route-id="@Model.OrderHeader.Id" class="btn-cancel">
+                        Cancel Order
+                    </a>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>

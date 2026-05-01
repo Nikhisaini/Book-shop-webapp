@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <!--<Nullable>enable</Nullable>-->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-Ecomm_project_1-368ac8bd-ba7d-4f38-9524-0c18e3dcc59c</UserSecretsId>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<NoWarn>NU1510</NoWarn>
+	</PropertyGroup>
+	<PropertyGroup>
+		<NoWarn>NU1903</NoWarn>
+	</PropertyGroup>
+	<PropertyGroup>
+		<NoWarn>NU1900</NoWarn>
+	</PropertyGroup>
+	
+  <ItemGroup>
+    <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="10.0.0" />
+    <PackageReference Include="AspNet.Security.OAuth.LinkedIn" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.2" />
+	 
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="10.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.2" />
+   
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+    <PackageReference Include="NuGet.Packaging" Version="7.3.1" />
+    <PackageReference Include="NuGet.Protocol" Version="7.3.1" />
+    <PackageReference Include="QRCoder" Version="1.8.0" />
+    <PackageReference Include="Razorpay" Version="3.3.2" />
+    <PackageReference Include="RazorPay.Core" Version="1.0.2" />
+    <PackageReference Include="Stripe.net" Version="51.0.0" />
+    <PackageReference Include="Twilio" Version="7.14.7" />
+    <PackageReference Include="Twilio.AspNet.Core" Version="8.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Ecomm_project_1.DataAccess\Ecomm_project_1.DataAccess.csproj" />
+    <ProjectReference Include="..\Ecomm_project_1.Models\Ecomm_project_1.Models.csproj" />
+    <ProjectReference Include="..\Ecomm_project_1.Utility\Ecomm_project_1.Utility.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\products\" />
+  </ItemGroup>
+
+</Project>

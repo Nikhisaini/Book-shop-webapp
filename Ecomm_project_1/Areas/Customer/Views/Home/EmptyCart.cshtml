@@ -1,0 +1,23 @@
+﻿<div class=" container-fluid mt-4 px-0">
+    <div class="row">
+        <div class="col-12 text-start ps-5 ">
+            <h1 class="display-5 fw-bolder fw-bold  text-dark mb-5">Shopping Cart</h1>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12 text-center py-5">
+        <div class="mb-4">
+            <img src="~/images/EmptyCart.png" alt="Empty Cart" style="max-width: 250px;" />
+        </div>            
+        <h5 class="text-dark fw-bold"><b>Your cart is empty</b></h5>
+        <h4 class="text-dark">Add items to get started</h4>
+            
+        <a asp-area="Customer" asp-controller="Home" asp-action="Index"
+               class="btn  btn-primary btn-lg px-5 mt-3 text-white fw-bold">        
+            Start Shopping
+        </a>
+    </div>
+</div>

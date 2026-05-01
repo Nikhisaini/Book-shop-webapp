@@ -1,0 +1,45 @@
+﻿@model int
+<div class="container pb-5 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6 text-center">
+
+            <div class="mb-4">
+                <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+            </div>
+
+            <h1 class="display-4 fw-bold text-dark mb-3">Order Confirmed!</h1>
+
+            <p class="lead text-secondary mb-4">
+                Thank you for your purchase. We’ve received your order and we’ll send a follow-up email with details shortly.
+            </p>
+
+            <div class="card border-0 shadow-sm bg-light mb-5">
+                <div class="card-body py-4">
+                    <p class="text-uppercase small fw-bold text-muted mb-1">Your Order Number</p>
+                    <h3 class="text-primary mb-0">#@Model</h3>
+                </div>
+            </div>
+            <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+                <a asp-area="Customer" asp-controller="Home" asp-action="Index"
+                   class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow-sm">
+                    Continue Shopping
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f8f9fa; 
+    }
+
+    .btn-primary {
+        transition: transform 0.2s;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+</style>
