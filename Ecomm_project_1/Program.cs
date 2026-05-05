@@ -33,26 +33,27 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
     options.LogoutPath = $"/Identity/Account/Logout";
 });
-builder.Services.AddAuthentication().AddFacebook(option =>
-{
-    option.AppId = "2174004093432938";
-    option.AppSecret = "e500016c5f2c995b6a183d70c44f88f9";
-});
-builder.Services.AddAuthentication().AddGoogle(options =>
-{
-    options.ClientId = "371976608900-d218sif2e4e1hf6c3h1gg8vj61d9q38k.apps.googleusercontent.com";
-    options.ClientSecret = "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";
-});
-builder.Services.AddAuthentication().AddLinkedIn(options =>
-{
-    options.ClientId = "86rkutftb5b04j";
-    options.ClientSecret = "WPL_AP1.saDVgPSJE5GSemJi.Pe74EA==";
-});
-builder.Services.AddAuthentication().AddGitHub(options =>
-{
-    options.ClientId = "M1Q0VHp4SkVncjFNQ2tjT2ZmQ2M6MTpjaQ";
-    options.ClientSecret = "3PCiYcOpvqvhBzkK5UDENzPBxnMLS4NQlYHtJGeIZsvM3uJ2Sy";
-});
+builder.Services.AddAuthentication()
+    .AddFacebook(options =>
+    {
+        options.AppId = builder.Configuration["Authentication:Facebook:AppId"];
+        options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
+    })
+    .AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    })
+    .AddLinkedIn(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:LinkedIn:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:LinkedIn:ClientSecret"];
+    })
+    .AddGitHub(options =>
+    {
+        options.ClientId = builder.Configuration["Authentication:GitHub:ClientId"];
+        options.ClientSecret = builder.Configuration["Authentication:GitHub:ClientSecret"];
+    });
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -68,7 +69,8 @@ builder.Services.AddTwilioClient(builder.Configuration.GetSection("Twilio"));
 builder.Services.AddScoped<ITwilioService, TwilioService>();
 builder.Services.AddTransient<ISmsSender, SmsSender>();
 
-
+var stripeKey = builder.Configuration["StripeSettings:SecretKey"];
+var twilioToken = builder.Configuration["Twilio:AuthToken"];
 
 var app = builder.Build();
 
