@@ -48,6 +48,11 @@ builder.Services.AddAuthentication()
     {
         options.ClientId = builder.Configuration["Authentication:LinkedIn:ClientId"];
         options.ClientSecret = builder.Configuration["Authentication:LinkedIn:ClientSecret"];
+        options.Authority = "https://www.linkedin.com/oauth";
+        options.CallbackPath = "/signin-linkedin";
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
+        options.Scope.Add("email");
     })
     .AddGitHub(options =>
     {
