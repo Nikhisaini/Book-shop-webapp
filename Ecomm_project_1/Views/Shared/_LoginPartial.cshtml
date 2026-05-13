@@ -3,24 +3,39 @@
 @inject UserManager<IdentityUser> UserManager
 
 <ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a  class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-    </li>
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-white">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
+    @if (SignInManager.IsSignedIn(User))
+    { 
+            var displayName = User.Identity?.Name ?? "";
+            if (displayName.Contains("@"))
+            {
+                displayName = displayName.Split('@')[0];
+                if (displayName.Length > 0)
+                {
+                    displayName = char.ToUpper(displayName[0]) + displayName.Substring(1);
+                }
+            }
+        <li class="nav-item dropdown align-self-center ms-2">
+            <a class="nav-link fs-5 py-1 cart-link" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" title="Account">
+                <i class="fa-regular fa-circle-user"></i>
+            </a>    
+            <div class="dropdown-menu dropdown-menu-end shadow border-0 mt-2 rounded-4 " style="min-width: 180px;">
+                <div class="dropdown-header text-muted font-monospace small ">Hello, @displayName</div>        
+                <a class="dropdown-item px-4 py-2" asp-area="Identity" asp-page="/Account/Manage/Index">My Profile</a>        
+                <div class="dropdown-divider opacity-25"></div>        
+                <form class="form-inline w-100" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button type="submit" class="dropdown-item px-4 py-2 text-danger fw-bold">Logout</button>
+                </form>
+            </div>
+        </li>
+    }
+    else
+    {
+        <!-- Clean links without 'text-white' so they match the brown theme -->
+        <li class="nav-item align-self-center">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+        <li class="nav-item align-self-center">
+            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+    }
 </ul>

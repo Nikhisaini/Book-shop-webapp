@@ -685,9 +685,1045 @@ table.dataTable {
 
 
 
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden; /* Prevents horizontal scrolling */
+}
+
+/* Remove margin below the navbar if it exists */
+.navbar {
+    margin-bottom: 0 !important;
+}
+/* ══════════════════════════════════════════════════════════════
+   MODERN NAVBAR (BROWN & CREAM THEME)
+══════════════════════════════════════════════════════════════ */
+
+/* Main Navbar Background */
+.custom-navbar {
+    background-color: var(--cream) !important;
+    border-bottom: 1px solid var(--parchment) !important;
+    box-shadow: 0 4px 15px rgba(28, 18, 8, 0.06) !important;
+    padding: 12px 15px !important; /* Aligns with your home page sections */
+    font-family: 'Lora', serif;
+}
+
+/* Brand Logo Text Styling */
+.brand-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--ink-soft) !important;
+    margin-right: 2rem;
+    letter-spacing: 0.02em;
+}
+
+    .brand-text span {
+        color: var(--amber);
+        font-style: italic;
+    }
+
+/* Standard Links */
+.custom-navbar .nav-link {
+    color: var(--ink-soft) !important; /* Deep Brown Text */
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 8px 16px !important;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+    /* Hover Effect for Links (Underline animation) */
+    .custom-navbar .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 50%;
+        background-color: var(--amber);
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
+
+    .custom-navbar .nav-link:hover {
+        color: var(--amber-dark) !important;
+    }
+
+        .custom-navbar .nav-link:hover::after {
+            width: 60%;
+        }
+
+/* Dropdown Menu Styling */
+.custom-navbar .dropdown-menu {
+    background-color: var(--white);
+    border: 1px solid var(--parchment);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(28, 18, 8, 0.1);
+    padding: 12px 0;
+    margin-top: 10px;
+}
+
+.custom-navbar .dropdown-item {
+    color: var(--ink-soft) !important;
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 24px;
+    transition: all 0.2s ease;
+}
+
+    .custom-navbar .dropdown-item:hover {
+        background-color: var(--parchment);
+        color: var(--amber-dark) !important;
+        padding-left: 28px; /* Slight indent on hover for modern feel */
+    }
+
+/* Cart Icon & Badge Overrides */
+.custom-navbar .cart-link {
+    font-size: 1.2rem;
+    color: var(--ink-soft) !important;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+    .custom-navbar .cart-link:hover {
+        color: var(--amber) !important;
+    }
+
+.custom-navbar .cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background: linear-gradient(135deg, var(--amber), var(--amber-dark));
+    color: var(--white);
+    font-size: 10px;
+    font-family: sans-serif;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--cream); /* Makes badge pop */
+}
+
+/* Navbar Toggler (Mobile Menu Icon) */
+.custom-navbar .navbar-toggler {
+    border-color: var(--parchment);
+}
+
+.custom-navbar .navbar-toggler-icon {
+    filter: invert(20%) sepia(20%) saturate(500%) hue-rotate(340deg) brightness(50%) contrast(90%); /* Makes the hamburger icon brown */
+}
+
+/* User Profile Dropdown Styling */
+.custom-navbar .dropdown-menu {
+    background-color: var(--white);
+    border: 1px solid var(--parchment) !important;
+    border-radius: 12px !important; /* Soft, rounded corners */
+    box-shadow: 0 8px 24px rgba(28, 18, 8, 0.08) !important; /* Elegant soft shadow */
+    padding: 10px 0;
+}
+
+.custom-navbar .dropdown-header {
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted) !important;
+}
+
+.custom-navbar .dropdown-item {
+    font-family: 'Lora', serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--ink-soft) !important;
+    transition: all 0.2s ease;
+}
+
+    .custom-navbar .dropdown-item:hover {
+        background-color: var(--cream);
+        color: var(--amber-dark) !important;
+        padding-left: 1.75rem !important; /* Cool slide-in effect on hover */
+    }
+
+    /* Make the Logout button pop slightly on hover */
+    .custom-navbar .dropdown-item.text-danger:hover {
+        color: #dc3545 !important;
+        background-color: #fff5f5;
+    }
+    /* Centers the profile dropdown perfectly underneath the circle icon */
+.custom-navbar .dropdown-menu-end {
+    right: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
 
 
 
+/* ══════════════════════════════════════════════════════════════
+   Login Page Css
+══════════════════════════════════════════════════════════════ */
 
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    font-family: 'Lato', sans-serif;
+    background: #F5EFE6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-page {
+    /* flex: 1 tells this div to grow and fill all available space */
+    flex: 1 0 auto;
+    display: flex;
+    align-items: stretch;
+    margin: 0;
+    padding: 0;
+    /* Remove any min-height with calc() */
+}
+
+.login-container {
+    display: flex;
+    width: 100%;
+    /* This ensures the container stays flush against the top */
+    align-self: stretch;
+}
+header {
+    line-height: 0; 
+}
+/* Left decorative panel */
+.login-panel {
+    width: 45%;
+    background: #1C2B4A;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+    .login-panel::before {
+        content: '';
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: #243660;
+        top: -80px;
+        right: -80px;
+    }
+
+    .login-panel::after {
+        content: '';
+        position: absolute;
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        background: #162240;
+        bottom: 60px;
+        left: -40px;
+    }
+
+.panel-brand {
+    position: relative;
+    z-index: 2;
+}
+
+.logo-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+}
+
+    .logo-text span {
+        color: #C8862A;
+    }
+
+.panel-tagline {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: #8fa3c5;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+.panel-quote {
+    position: relative;
+    z-index: 2;
+    margin: auto 0;
+}
+
+    .panel-quote blockquote {
+        font-family: 'Playfair Display', serif;
+        font-size: 20px;
+        font-style: italic;
+        color: #fff;
+        line-height: 1.6;
+        border-left: 3px solid #C8862A;
+        padding-left: 1.2rem;
+    }
+
+    .panel-quote cite {
+        font-size: 12px;
+        color: #8fa3c5;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin-top: 12px;
+        display: block;
+        padding-left: 1.2rem;
+    }
+
+.panel-books {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 6px;
+    align-items: flex-end;
+    height: 80px;
+}
+
+.book-spine {
+    border-radius: 3px 3px 0 0;
+    flex-shrink: 0;
+}
+
+.bs-1 {
+    width: 18px;
+    height: 65px;
+    background: #C8862A;
+}
+
+.bs-2 {
+    width: 14px;
+    height: 80px;
+    background: #4a6fa5;
+}
+
+.bs-3 {
+    width: 20px;
+    height: 55px;
+    background: #8fa3c5;
+}
+
+.bs-4 {
+    width: 16px;
+    height: 72px;
+    background: #D4A853;
+}
+
+.bs-5 {
+    width: 18px;
+    height: 48px;
+    background: #6b8fc7;
+}
+
+.bs-6 {
+    width: 14px;
+    height: 68px;
+    background: #C8862A;
+    opacity: 0.6;
+}
+
+/* Right form section */
+.login-form-section {
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2rem 4rem;
+}
+
+.form-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+}
+
+.form-subheading {
+    font-size: 14px;
+    color: #7a7a7a;
+    margin-bottom: 2rem;
+}
+
+.field-group {
+    margin-bottom: 1.2rem;
+}
+
+.field-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #4a4a4a;
+    margin-bottom: 6px;
+}
+
+.field-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Lato', sans-serif;
+    background: #fff;
+    color: #1a1a2e;
+    transition: border-color 0.2s;
+    outline: none;
+}
+
+    .field-input:focus {
+        border-color: #1C2B4A;
+    }
+
+    .field-input::placeholder {
+        color: #bbb;
+    }
+
+.remember-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+}
+
+    .remember-row input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #1C2B4A;
+        cursor: pointer;
+    }
+
+    .remember-row label {
+        font-size: 13px;
+        color: #5a5a5a;
+        cursor: pointer;
+    }
+
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    background: #1C2B4A;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+    .btn-login:hover {
+        background: #243660;
+    }
+
+.helper-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 1.2rem;
+    flex-wrap: wrap;
+}
+
+    .helper-links a {
+        font-size: 13px;
+        color: #C8862A;
+        text-decoration: none;
+    }
+
+        .helper-links a:hover {
+            text-decoration: underline;
+        }
+
+.section-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.5rem 0 1.2rem;
+    color: #aaa;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+    .section-divider::before,
+    .section-divider::after {
+        content: '';
+        flex: 1;
+        border-top: 1px solid #ddd;
+    }
+
+.ext-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-external {
+    flex: 1;
+    padding: 11px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 13px;
+    font-family: 'Lato', sans-serif;
+    color: #3a3a3a;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+    .btn-external:hover {
+        border-color: #1C2B4A;
+        background: #f9f6f1;
+    }
+
+
+    /* ══════════════════════════════════════════════════════════════
+   Index Account Page Css
+══════════════════════════════════════════════════════════════ */
+
+/* ---- Reset & Base ---- */
+.kg-profile-wrapper * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.kg-profile-wrapper {
+    font-family: 'Lato', sans-serif;
+    background: #f5ede0;
+    min-height: 100vh;
+    padding: 40px 16px 60px;
+    color: #2c1810;
+}
+
+/* ---- Toast ---- */
+.kg-toast {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #2d5a3d;
+    color: #d4f0e0;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    letter-spacing: 0.4px;
+}
+
+    .kg-toast.show {
+        display: flex;
+    }
+
+    .kg-toast svg {
+        flex-shrink: 0;
+    }
+
+/* ---- Breadcrumb ---- */
+.kg-breadcrumb {
+    font-size: 12px;
+    color: #8a7060;
+    margin-bottom: 28px;
+    letter-spacing: 0.3px;
+}
+
+    .kg-breadcrumb a {
+        color: #c4622d;
+        text-decoration: none;
+    }
+
+        .kg-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+/* ---- Profile Header ---- */
+.kg-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+}
+
+.kg-avatar-wrap {
+    position: relative;
+    display: inline-block;
+}
+
+.kg-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: #2d5a3d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 34px;
+    color: #a8d8b8;
+    border: 3px solid #c4622d;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+    .kg-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+    }
+
+.kg-avatar-cam {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 28px;
+    height: 28px;
+    background: #c4622d;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid #fff8f0;
+}
+
+    .kg-avatar-cam svg {
+        color: #fff;
+    }
+
+.kg-header-info h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: #2c1810;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.kg-header-info p {
+    color: #8a7060;
+    font-size: 13px;
+}
+
+.kg-admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #eaf5ee;
+    color: #2d5a3d;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid #a8d8b8;
+    margin-top: 8px;
+    letter-spacing: 0.6px;
+}
+
+/* ---- Grid Layout ---- */
+.kg-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@@media (max-width: 768px) {
+    .kg-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.kg-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ---- Cards ---- */
+.kg-card {
+    background: #fffaf4;
+    border: 1px solid #e8d5bf;
+    border-radius: 14px;
+    padding: 28px;
+}
+
+.kg-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: #2c1810;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #e8d5bf;
+    padding-bottom: 14px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+    .kg-card-title svg {
+        color: #c4622d;
+        flex-shrink: 0;
+    }
+
+/* ---- Form Fields ---- */
+.kg-field {
+    margin-bottom: 18px;
+}
+
+.kg-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #8a7060;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 7px;
+}
+
+.kg-input-wrap {
+    position: relative;
+}
+
+    .kg-input-wrap svg {
+        position: absolute;
+        right: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #b09070;
+        pointer-events: none;
+    }
+
+.kg-input {
+    width: 100%;
+    background: #fff8f0;
+    border: 1px solid #d4b896;
+    border-radius: 9px;
+    padding: 10px 14px;
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    color: #2c1810;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+}
+
+    .kg-input:focus {
+        border-color: #c4622d;
+        box-shadow: 0 0 0 3px rgba(196, 98, 45, 0.12);
+    }
+
+    .kg-input:disabled {
+        color: #8a7060;
+        background: #f0e8de;
+        cursor: not-allowed;
+    }
+
+    .kg-input.has-icon {
+        padding-right: 40px;
+    }
+
+.kg-validation-msg {
+    font-size: 12px;
+    color: #b33a1a;
+    margin-top: 5px;
+}
+
+/* ---- Buttons ---- */
+.kg-btn-save {
+    width: 100%;
+    background: #2d5a3d;
+    color: #d4f0e0;
+    border: none;
+    border-radius: 9px;
+    padding: 13px;
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+    margin-top: 6px;
+}
+
+    .kg-btn-save:hover {
+        background: #1e3d2a;
+    }
+
+.kg-btn-2fa {
+    width: 100%;
+    background: transparent;
+    color: #c4622d;
+    border: 1.5px solid #c4622d;
+    border-radius: 9px;
+    padding: 11px;
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+    margin-top: 12px;
+    text-decoration: none;
+}
+
+    .kg-btn-2fa:hover {
+        background: #c4622d;
+        color: #fff;
+    }
+
+/* ---- Stats ---- */
+.kg-stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.kg-stat {
+    background: #f5ede0;
+    border: 1px solid #e8d5bf;
+    border-radius: 9px;
+    padding: 14px;
+    text-align: center;
+}
+
+.kg-stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #2c1810;
+    font-weight: 600;
+}
+
+.kg-stat-lbl {
+    font-size: 11px;
+    color: #8a7060;
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ---- Recent Orders ---- */
+.kg-order-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0e4d0;
+}
+
+    .kg-order-item:last-child {
+        border-bottom: none;
+    }
+
+.kg-order-cover {
+    width: 36px;
+    height: 48px;
+    background: #2d5a3d;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+    .kg-order-cover svg {
+        color: #a8d8b8;
+    }
+
+.kg-order-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.kg-order-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2c1810;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.kg-order-meta {
+    font-size: 11px;
+    color: #8a7060;
+    margin-top: 2px;
+}
+
+.kg-status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.kg-status-delivered {
+    background: #eaf5ee;
+    color: #2d5a3d;
+}
+
+.kg-status-processing {
+    background: #fef3e8;
+    color: #c4622d;
+}
+
+/* ---- Toggle Switches ---- */
+.kg-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 0;
+    border-bottom: 1px solid #f0e4d0;
+}
+
+    .kg-toggle-row:last-child {
+        border-bottom: none;
+    }
+
+.kg-toggle-info p {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2c1810;
+}
+
+.kg-toggle-info span {
+    font-size: 11px;
+    color: #8a7060;
+}
+
+.kg-toggle-btn {
+    width: 42px;
+    height: 24px;
+    background: #d4b896;
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: background 0.25s;
+    flex-shrink: 0;
+}
+
+    .kg-toggle-btn.active {
+        background: #2d5a3d;
+    }
+
+    .kg-toggle-btn::after {
+        content: '';
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        width: 16px;
+        height: 16px;
+        background: #fff;
+        border-radius: 50%;
+        transition: left 0.25s;
+    }
+
+    .kg-toggle-btn.active::after {
+        left: 22px;
+    }
+
+/* ---- Password Change Section ---- */
+.kg-divider {
+    border: none;
+    border-top: 1px solid #e8d5bf;
+    margin: 20px 0;
+}
+
+.kg-section-sub {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: #2c1810;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.kg-pw-eye {
+    position: absolute;
+    right: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #b09070;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* ---- Address Tag ---- */
+.kg-address-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f5ede0;
+    border: 1px solid #e8d5bf;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: #2c1810;
+    margin: 4px 4px 0 0;
+    font-weight: 600;
+}
+
+    .kg-address-tag button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #8a7060;
+        padding: 0;
+        line-height: 1;
+        font-size: 14px;
+    }
+
+.kg-add-address {
+    background: none;
+    border: 1px dashed #c4622d;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: #c4622d;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+    .kg-add-address:hover {
+        background: #fef3e8;
+    }

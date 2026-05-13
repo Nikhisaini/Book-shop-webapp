@@ -1,29 +1,247 @@
 ﻿@model IEnumerable<Ecomm_project_1.Models.Product>
 
-<div class="row" id="tblData">
-    @foreach (var product in Model)
-    {
-        <div class="col-lg-3 col-md-6">
-            <div class="row p-2">
-                <div class="col-12  p-1" style="border:1px solid #008cba; border-radius: 5px;">
-                    <div class="card" style="border:0px;">
-                        <img src="@product.ImageUrl" class="card-img-top rounded" />
-                        <div class="pl-1">
-                            <p class="card-title h5"><b style="color:#2c3e50">@product.Title</b></p>
-                            <p class="card-title text-primary">by <b>@product.Author</b></p>
+@{
+    ViewData["Title"] = "KitabGhar – Punjabi Bookstore";
+    var bestSellers = Model.Take(12).ToList();
+    var newArrivals = Model.Skip(12).Take(8).ToList();
+
+    // NEW: Safely get the counts dictionary, or make an empty one if it's null
+    var catCounts = ViewBag.CategoryCounts as Dictionary<string, int> ?? new Dictionary<string, int>();
+    
+    // Keep your active category logic
+    var activeCategory = Context.Request.Query["category"].ToString();
+}
+<div class="is-home-page">
+  
+<!-- PROMO STRIP -->
+<div class="promo-strip">
+    <div class="promo-item">📦 <strong>Free Shipping</strong> on orders over ₹499</div>
+    <div class="promo-dot"></div>
+    <div class="promo-item">🔄 <strong>Easy Returns</strong> within 30 days</div>
+    <div class="promo-dot"></div>
+    <div class="promo-item">🎁 <strong>Gift Wrapping</strong> available</div>
+    <div class="promo-dot"></div>
+    <div class="promo-item">⚡ <strong>Same Day Dispatch</strong> before 2 PM</div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="section">
+    <div class="section-header">
+        <h2 class="section-title">Browse by <span>Category</span></h2>
+    </div>
+    <div class="categories-grid">
+        <a asp-action="Index" asp-route-category="Poetry" class="cat-card">
+            <div class="cat-icon">📜</div>
+            <div class="cat-name">Poetry</div>
+                <div class="cat-count">@(catCounts.ContainsKey("Poetry") ? catCounts["Poetry"] : 0) titles</div>
+        </a>
+        <a asp-action="Index" asp-route-category="Novel" class="cat-card">
+            <div class="cat-icon">📖</div>
+            <div class="cat-name">Novel</div>
+                <div class="cat-count">@(catCounts.ContainsKey("Novel") ? catCounts["Novel"] : 0) titles</div>
+        </a>
+        <a asp-action="Index" asp-route-category="History" class="cat-card">
+            <div class="cat-icon">🏛️</div>
+            <div class="cat-name">History</div>
+                <div class="cat-count">@(catCounts.ContainsKey("History") ? catCounts["History"] : 0) titles</div>
+        </a>
+        <a asp-action="Index" asp-route-category="Spirituality" class="cat-card">
+            <div class="cat-icon">🌿</div>
+            <div class="cat-name">Spirituality</div>
+                <div class="cat-count">@(catCounts.ContainsKey("Spirituality") ? catCounts["Spirituality"] : 0) titles</div>
+        </a>
+        <a asp-action="Index" asp-route-category="Drama" class="cat-card">
+            <div class="cat-icon">🎭</div>
+            <div class="cat-name">Drama</div>
+                <div class="cat-count">@(catCounts.ContainsKey("Drama") ? catCounts["Drama"] : 0) titles</div>
+        </a>
+            <a asp-action="Index" asp-route-category="Motivation" class="cat-card">
+            <div class="cat-icon">📈</div>
+            <div class="cat-name">Motivation</div>
+                <div class="cat-count">@(catCounts.ContainsKey("Motivation") ? catCounts["Motivation"] : 0) titles</div>
+        </a>
+    </div>
+</div>
+
+<!-- BESTSELLERS SECTION -->
+<div class="section">
+    <div class="section-header">
+        <h2 class="section-title">Bestselling <span>Books</span></h2>
+        <a asp-action="Index" class="see-all">View all →</a>
+    </div>
+
+    <div class="carousel-wrap" id="carousel1">
+        <button class="carousel-btn prev" onclick="moveCarousel('carousel1', -1)">&#8249;</button>
+        <div class="carousel-track-container">
+            <div class="carousel-track" id="carousel1-track">
+                @foreach (var product in bestSellers)
+                {
+                    <div class="book-card">
+                        <div class="book-cover">
+                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                            {
+                                <img src="@product.ImageUrl" alt="@product.Title" />
+                            }
+                            else
+                            {
+                                <div class="book-cover-placeholder">@product.Title</div>
+                            }
+                            <div class="bestseller-tag">BESTSELLER</div>
+                            @{
+                                int discountPct = product.ListPrice > 0
+                                    ? (int)Math.Round((1 - (double)product.Price100 / product.ListPrice) * 100)
+                                    : 0;
+                            }
+                            @if (discountPct > 0)
+                            {
+                                <div class="discount-tag">@discountPct%<br />OFF</div>
+                            }
                         </div>
-                        <div style="padding-left:5px;">
-                            <p>List Price: <strike><b class="">₹@product.ListPrice.ToString("0.00")</b></strike></p>
-                        </div>
-                        <div style="padding-left:5px;">
-                            <p style="color:maroon">As low as: <b class="">₹@product.Price100.ToString("0.00")</b></p>
+                        <div class="book-info">
+                            <div class="book-title">@product.Title</div>
+                            <div class="book-author">@product.Author</div>
+                            <div class="stars">★★★★★ <span class="review-count">(Reviews)</span></div>
+                            <div class="book-pricing">
+                                <span class="price-now">₹@product.Price100.ToString("0")</span>
+                                <span class="price-was">₹@product.ListPrice.ToString("0")</span>
+                            </div>
+                            <a asp-action="Details" asp-route-id="@product.Id" class="btn-details">View Details</a>
                         </div>
                     </div>
-                    <div>
-                        <a asp-action="Details" class="btn btn-primary form-control" asp-route-id="@product.Id">Details</a>
-                    </div>
-                </div>
+                }
             </div>
         </div>
-    }
+        <button class="carousel-btn next" onclick="moveCarousel('carousel1', 1)">&#8250;</button>
+    </div>
+    <div class="carousel-dots" id="carousel1-dots">
+        <!-- Dots will be generated by your script -->
+    </div>
 </div>
+<!-- NEW ARRIVALS CAROUSEL -->
+@if (newArrivals.Any())
+{
+    <div class="section new-arrivals-section">
+        <div class="section-header">
+            <h2 class="section-title">New <span>Arrivals</span></h2>
+            <a asp-action="Index" class="see-all">See all new →</a>
+        </div>
+
+        <div class="carousel-wrap" id="carousel2">
+            <button class="carousel-btn prev" onclick="moveCarousel('carousel2', -1)">&#8249;</button>
+            
+            <div class="carousel-track-container">
+                <div class="carousel-track" id="carousel2-track">
+                    @foreach (var product in newArrivals)
+                    {
+                        <div class="book-card">
+                            <div class="book-cover">
+                                @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                {
+                                    <img src="@product.ImageUrl" alt="@product.Title" />
+                                }
+                                else
+                                {
+                                    <div class="book-cover-placeholder">@product.Title</div>
+                                }
+                                <div class="new-tag">NEW</div>
+                            </div>
+                            <div class="book-info">
+                                <div class="book-title">@product.Title</div>
+                                <div class="book-author">@product.Author</div>
+                                <div class="book-pricing">
+                                    <span class="price-now">₹@product.Price100.ToString("0")</span>
+                                    <span class="price-was">₹@product.ListPrice.ToString("0")</span>
+                                </div>
+                                <a asp-action="Details" asp-route-id="@product.Id" class="btn-details">View Details</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <button class="carousel-btn next" onclick="moveCarousel('carousel2', 1)">&#8250;</button>
+        </div>
+        
+        <div class="carousel-dots" id="carousel2-dots">
+            <!-- Dots generated by JS -->
+        </div>
+    </div>
+}
+    <!-- All your home page code (Hero, Categories, Bestsellers) -->
+</div>
+@section Scripts {
+    <script>
+        const carousels = {};
+
+        function initCarousel(id) {
+            const track = document.getElementById(id + '-track');
+            if (!track) return; // Safety check if carousel doesn't exist on page
+
+            const cards = track.querySelectorAll('.book-card');
+            if (cards.length === 0) return;
+
+            // Dynamically calculate width including margins/gaps
+            const style = window.getComputedStyle(cards[0]);
+            const margin = parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+            const cardW = cards[0].offsetWidth + (margin || 16); 
+
+            const containerW = track.parentElement.offsetWidth;
+            const visible = Math.max(1, Math.floor(containerW / cardW));
+            const maxSlide = Math.max(0, cards.length - visible);
+            const totalDots = Math.ceil(cards.length / visible);
+            
+            carousels[id] = { current: 0, max: maxSlide, cardW, totalDots };
+
+            // Rebuild dots dynamically
+            const dotsEl = document.getElementById(id + '-dots');
+            if (dotsEl) {
+                dotsEl.innerHTML = '';
+                for (let i = 0; i < totalDots; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = 'dot' + (i === 0 ? ' active' : '');
+                    btn.onclick = () => goToSlide(id, i);
+                    dotsEl.appendChild(btn);
+                }
+            }
+            
+            // Reset position on resize to prevent alignment issues
+            track.style.transform = `translateX(0px)`;
+        }
+
+        function moveCarousel(id, dir) {
+            if (!carousels[id]) initCarousel(id);
+            const c = carousels[id];
+            c.current = Math.max(0, Math.min(c.max, c.current + dir));
+            document.getElementById(id + '-track').style.transform = `translateX(-${c.current * c.cardW}px)`;
+            
+            const activeDot = c.max === 0 ? 0 : Math.round((c.current / c.max) * (c.totalDots - 1));
+            updateDots(id, activeDot);
+        }
+
+        function goToSlide(id, slide) {
+            if (!carousels[id]) initCarousel(id);
+            const c = carousels[id];
+            c.current = Math.round(slide * c.max / Math.max(1, c.totalDots - 1));
+            document.getElementById(id + '-track').style.transform = `translateX(-${c.current * c.cardW}px)`;
+            updateDots(id, slide);
+        }
+
+        function updateDots(id, active) {
+            const dots = document.querySelectorAll('#' + id + '-dots .dot');
+            dots.forEach((d, i) => d.classList.toggle('active', i === active));
+        }
+
+       
+
+        // Initialize BOTH carousels on load and resize[cite: 1]
+        window.addEventListener('load', () => {
+            initCarousel('carousel1');
+            initCarousel('carousel2');
+        });
+
+        window.addEventListener('resize', () => {
+            initCarousel('carousel1');
+            initCarousel('carousel2');
+        });
+    </script>
+}

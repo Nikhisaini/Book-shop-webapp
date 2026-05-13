@@ -17,7 +17,7 @@ namespace Ecomm_project_1.Areas.Customer.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public IActionResult Index()
+        public IActionResult Index(string category = null)
         {
             var claimIdentity = (ClaimsIdentity)(User.Identity);
             var claims = claimIdentity.FindFirst(ClaimTypes.NameIdentifier);
@@ -26,8 +26,19 @@ namespace Ecomm_project_1.Areas.Customer.Controllers
                 var count = _unitOfWork.shoppingCart.GetAll(sc => sc.ApplicationUserId == claims.Value).ToList().Count;
                 HttpContext.Session.SetInt32(SD.Ss_CartSessionCount, count);
             }
+
             //**
-            var productlist = _unitOfWork.product.GetAll();//show all product list 
+            IEnumerable<Product> productlist = _unitOfWork.product.GetAll(includeProperties: "catagory");//show all product list \
+            // 2. NEW: Count how many books are in each category automatically!
+            var categoryCounts = productlist.Where(p => p.catagory != null).GroupBy(p => p.catagory.Name).ToDictionary(g => g.Key, g => g.Count());
+
+            // Send the dictionary of counts to the HTML page
+            ViewBag.CategoryCounts = categoryCounts;
+            if (!string.IsNullOrEmpty(category))
+            {
+               
+                productlist = productlist.Where(p => p.catagory.Name == category).ToList();
+            }
             return View(productlist); //return productlist to view
         }
         public IActionResult Details(int id)
