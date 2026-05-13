@@ -3,7 +3,7 @@ name: MonsterASP Auto Deploy
 on:
   push:
     branches:
-      - main  # This triggers the update every time you push to the main branch
+      - master  # This triggers the update every time you push to the main branch
 
 jobs:
   publish-and-ftp:
