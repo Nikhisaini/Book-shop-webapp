@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Ecomm_project_1.Models.ViewModels.TopUserVM>
+<div class="container mt-4">
+    <div class="row pt-4 pb-3">
+        <div class="col-6">
+            <h2 class="text-primary">All-Time Top 5 Users</h2>
+        </div>
+    </div>
+    <hr />
+    
+    <table class="table table-bordered table-striped mt-4">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Total Spent</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.Name</td>
+                        <td>@user.Email</td>
+                        <td>@user.PhoneNumber</td>
+                        <td>@user.TotalSpent.ToString("C")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center">No user data found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

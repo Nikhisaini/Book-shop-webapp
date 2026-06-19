@@ -37,8 +37,13 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
+                        @* <li class="fn-item">
+                            <a asp-area="Customer" asp-controller="Order" asp-action="YourOrders" class="nav-link">Your Orders</a>
+                        </li> *@
+                        <li class="nav-item">
+                            <a class="nav-link"  asp-area="Customer" asp-controller="Order" asp-action="PreviousOrders">Previous Orders</a>
+                        </li>
                        
-                    
                         @if (User.IsInRole(SD.Role_Admin))
                         {
                             <li class="nav-item dropdown show">
@@ -64,6 +69,15 @@
                                     <a class="dropdown-item" asp-area="Admin" asp-controller="AllOrder" asp-action="MonthWiseOrder">MonthWise Order</a>
                                 </div>
                             </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-uppercase" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Top Users
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Report" asp-action="AllTopUsers">All Top User </a></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Report" asp-action="MonthlyTopUsers">Monthly Top User</a></li>
+                                </ul>
+                            </li>
                         }
                         @if (User.IsInRole(SD.Role_Employee))
                         {
@@ -79,41 +93,30 @@
                     </ul>
                 
                     <partial name="_LoginPartial" />
-                
                     <ul class="navbar-nav">
-                        @if (httpContextAccessor.HttpContext.Session.GetInt32(SD.Ss_CartSessionCount) != null &&
-                            httpContextAccessor.HttpContext.Session.GetInt32(SD.Ss_CartSessionCount) != 0)
-                        {
-                            var count = httpContextAccessor.HttpContext.Session.GetInt32(SD.Ss_CartSessionCount);
-                            <li class="nav-item align-self-center ms-3">
-                                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link cart-link">
-                                    <i class="fa fa-shopping-cart"></i>
-                                    <span class="cart-badge">@count</span>
-                                </a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item align-self-center ms-3">
-                                <a asp-area="Customer" asp-controller="Home" asp-action="EmptyCart" class="nav-link cart-link">
-                                    <i class="fa fa-shopping-cart"></i>
-                                </a>
-                            </li>
-                        }
+                        <li class="nav-item align-self-center ms-3">
+                            <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link cart-link">
+                                <i class="fa fa-shopping-cart"></i>
+            
+                                <span class="cart-badge">
+                                    @(httpContextAccessor.HttpContext.Session.GetInt32(SD.Ss_CartSessionCount) ?? 0)
+                                </span>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-        <div >
-            <main role="main" class="pb-3">
-                @RenderBody()
-            </main>
-        </div>
+    <div>
+        <main role="main" class="pb-5">
+            @RenderBody()
+        </main>
+    </div>
     
     <footer class="border-top footer text-muted">
         <div class="container text-info">
-            &copy; 2026 - Book Shopping Project <a asp-area="" asp-controller="Home"> </a>
+            &copy; 2026 - Book Shopping Project By Nikhil Saini<a asp-area="" asp-controller="Home"> </a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

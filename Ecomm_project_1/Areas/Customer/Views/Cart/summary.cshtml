@@ -2,6 +2,58 @@
 @model Ecomm_project_1.Models.ViewModels.ShoppingCartVM
 @inject IOptions<Ecomm_project_1.Utility.StripeSettings> Stripe;
 @inject IOptions<Ecomm_project_1.Utility.RazorpaySettings> Razorpay;
+
+<style>
+    .summary-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: 'Jost', sans-serif;
+    }
+    .summary-table th {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+        color: #6b5a42;
+        border-bottom: 2px solid #e8ddc8;
+        padding: 8px 4px;
+    }
+    .summary-table td {
+        padding: 10px 4px;
+        border-bottom: 1px solid #f0e8d8;
+        font-size: 14px;
+        color: #1c1208;
+    }
+    .summary-table td:last-child { text-align: right; }
+
+    .summary-table .row-subtotal td {
+        font-weight: 500;
+        border-top: 2px solid #e8ddc8;
+    }
+    .summary-table .row-discount td { color: #27ae60; }
+    .summary-table .row-gst td {
+        color: #6b5a42;
+        font-size: 13px;
+    }
+    .summary-table .row-grand td {
+        font-weight: 700;
+        font-size: 16px;
+        border-top: 2px solid #1c1208;
+        color: #1c1208;
+    }
+    .summary-table .row-grand td:last-child { color: #c9963c; }
+
+    .price-original {
+        color: #aaa;
+        text-decoration: line-through;
+        font-size: 12px;
+        margin-left: 6px;
+    }
+    .scroll-container {
+        max-height: 220px;
+        overflow-y: auto;
+    }
+</style>
+
 <form method="post" id="paymentForm">
     <br />
     <div class="backgroundWhiteBorder">
@@ -16,9 +68,12 @@
                         <a asp-action="Index" class="btn btn-outline-info btn-sm">Back to Cart</a>
                     </div>
                 </div>
+
                 <div class="card-body">
                     <div class="container rounded p-2">
                         <div class="row">
+
+                            @* ── LEFT: PICKUP DETAILS ── *@
                             <div class="col-12 col-lg-6 pb-4">
                                 <div class="row">
                                     <h4 class="d-flex justify-content-between align-items-center mb-3">
@@ -26,94 +81,132 @@
                                     </h4>
                                 </div>
                                 <div class="row my-1">
-                                    <div class="col-3">
-                                        <label>Name</label>
-                                    </div>
+                                    <div class="col-3"><label>Name</label></div>
                                     <div class="col-9">
                                         <input asp-for="@Model.OrderHeader.Name" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
-                                    <div class="col-3">
-                                        <label>Phone</label>
-                                    </div>
+                                    <div class="col-3"><label>Phone</label></div>
                                     <div class="col-9">
                                         <input asp-for="@Model.OrderHeader.PhoneNumber" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
-                                    <div class="col-3">
-                                        <label>Street Address</label>
-                                    </div>
+                                    <div class="col-3"><label>Street Address</label></div>
                                     <div class="col-9">
                                         <input asp-for="@Model.OrderHeader.StreetAddress" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
-                                    <div class="col-3">
-                                        <label>City</label>
-                                    </div>
+                                    <div class="col-3"><label>City</label></div>
                                     <div class="col-9">
                                         <input asp-for="@Model.OrderHeader.City" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
-                                    <div class="col-3">
-                                        <label>State</label>
-                                    </div>
+                                    <div class="col-3"><label>State</label></div>
                                     <div class="col-9">
                                         <input asp-for="@Model.OrderHeader.State" type="text" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="row my-1">
-                                    <div class="col-3">
-                                        <label>Postal Code</label>
-                                    </div>
+                                    <div class="col-3"><label>Postal Code</label></div>
                                     <div class="col-9">
                                         <input asp-for="@Model.OrderHeader.PostalCode" type="text" class="form-control" />
                                     </div>
                                 </div>
                             </div>
-                           
+
+                            @* ── RIGHT: ORDER SUMMARY TABLE ── *@
                             <div class="col-12 col-lg-5 offset-lg-1">
                                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                                     <span class="text-info">Order Summary:</span>
                                 </h4>
-                                <ul class="list-group mb-3 scroll-container">
-                                   
-                                    @foreach (var user in Model.ListCart)
-                                    {
-                                        <li class="list-group-item d-flex justify-content-between ">
-                                            <div>
-                                                <h6 class="my-0">@user.product.Title</h6>
-                                                <small class="text-muted">Quantity: @user.Count</small>
-                                            </div>
-                                            <span class="text-muted">₹ @(user.Price * user.Count)</span>
-                                        </li>
-                                    }
-                                   
-                                </ul>
-                                <ul class="list-group mb-3">
-                                    <li class="list-group-item d-flex justify-content-between bg-light">
-                                        <small class="text-info">Total (INR)</small>
-                                        <strong class="text-info">₹ @Model.OrderHeader.OrderTotal</strong>
-                                    </li>
-                                </ul>
+
+                                @{
+                                    double subTotal      = Model.ListCart.Sum(c => c.Price * c.Count);
+                                    double discount      = Math.Round(subTotal * 0.10, 2);
+                                    double afterDiscount = subTotal - discount;
+                                    double gst           = Math.Round(afterDiscount * 0.05, 2);
+                                    double grandTotal    = Math.Round(afterDiscount + gst, 2);
+                                }
+
+                                <table class="summary-table mb-3">
+                                    <thead>
+                                        <tr>
+                                            <th>Description</th>
+                                            <th style="text-align:right">Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @* ── Each item row ── *@
+                                        @foreach (var item in Model.ListCart)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @item.product.Title &times; @item.Count
+                                                    @if (item.product.ListPrice > item.Price)
+                                                    {
+                                                        <span class="price-original">
+                                                            ₹@((item.product.ListPrice * item.Count).ToString("0.00"))
+                                                        </span>
+                                                    }
+                                                </td>
+                                                <td>₹ @((item.Price * item.Count).ToString("0.00"))</td>
+                                            </tr>
+                                        }
+
+                                        @* ── Sub Total ── *@
+                                        <tr class="row-subtotal">
+                                            <td>Sub Total</td>
+                                            <td>₹ @subTotal.ToString("0.00")</td>
+                                        </tr>
+
+                                        @* ── 10% Discount ── *@
+                                        <tr class="row-discount">
+                                            <td>🎉 Discount (10%)</td>
+                                            <td>- ₹ @discount.ToString("0.00")</td>
+                                        </tr>
+
+                                        @* ── GST 5% on discounted amount ── *@
+                                        <tr class="row-gst">
+                                            <td>GST (5%)</td>
+                                            <td>₹ @gst.ToString("0.00")</td>
+                                        </tr>
+
+                                        @* ── Grand Total ── *@
+                                        <tr class="row-grand">
+                                            <td>Grand Total</td>
+                                            <td>₹ @grandTotal.ToString("0.00")</td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+                                @* Sync GrandTotal into OrderHeader for payment *@
+                                <input type="hidden" asp-for="OrderHeader.OrderTotal" value="@grandTotal" />
+
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="card-footer">
                     <div class="row">
                         <div class="col-12 col-md-8 pt-2">
-                            <p style="color:maroon; font-size:14px;">Estimate Arrival Date: @DateTime.Now.AddDays(7).ToShortDateString() - @DateTime.Now.AddDays(14).ToShortDateString()</p>
+                            <p style="color:maroon; font-size:14px;">
+                                Estimate Arrival Date: @DateTime.Now.AddDays(7).ToShortDateString() - @DateTime.Now.AddDays(14).ToShortDateString()
+                            </p>
                         </div>
-                        
+
                         <div class="col-12 col-md-4">
                             @{
-                                var ordertotalammount = Model.OrderHeader.OrderTotal * 100;
+                                var ordertotalammount = grandTotal * 100;
                             }
-     
+
+                            @* ── STRIPE ── *@
                             <script src="https://checkout.stripe.com/checkout.js"
                                     class="stripe-button"
                                     data-key="@Stripe.Value.PublishableKey"
@@ -129,85 +222,78 @@
                                 Pay with Stripe
                             </button>
                             <script>
-
-                               var stripeEl = document.getElementsByClassName("stripe-button-el");
-                               if (stripeEl[0]) stripeEl[0].style.display = "none";
-                               document.getElementById("btnStripe").addEventListener("click", function () {
-                               stripeEl[0].click();
-                               });
+                                var stripeEl = document.getElementsByClassName("stripe-button-el");
+                                if (stripeEl[0]) stripeEl[0].style.display = "none";
+                                document.getElementById("btnStripe").addEventListener("click", function () {
+                                    stripeEl[0].click();
+                                });
                             </script>
 
-                            <button type="button" id="btnRazorpay" class="btn btn-success form-control">
+                            @* ── RAZORPAY ── *@
+                            <button type="button" id="btnRazorpay" class="btn btn-success form-control mt-2">
                                 Pay with Razorpay
                             </button>
 
                             <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
                             <script>
                                 var rzpOptions = {
-                                "key": "@Razorpay.Value.KeyId",
-                                "amount": "@ordertotalammount",
-                                "currency": "INR",
-                                "name": "Book Shopping Project",
-                                "description": "Get Book For Testing",
-                                "config": {
-                                "display": {
-                                "blocks": {
-                                "upi": {
-                                "name": "Pay via QR or UPI",
-                                "instruments": [
-                                {
-                                "method": "upi"
-                                }
-                                ]
-                                }
-                                },
-                                "sequence": ["block.upi"],
-                                "preferences": {
-                                "show_default_blocks": true
-                                }
-                                }
-                                },
+                                    "key": "@Razorpay.Value.KeyId",
+                                    "amount": "@ordertotalammount",
+                                    "currency": "INR",
+                                    "name": "Book Shopping Project",
+                                    "description": "Get Book For Testing",
+                                    "config": {
+                                        "display": {
+                                            "blocks": {
+                                                "upi": {
+                                                    "name": "Pay via QR or UPI",
+                                                    "instruments": [{ "method": "upi" }]
+                                                }
+                                            },
+                                            "sequence": ["block.upi"],
+                                            "preferences": { "show_default_blocks": true }
+                                        }
+                                    },
+                                    handler: function (response) {
+                                        var f = document.createElement("form");
+                                        f.method = "POST";
+                                        f.action = "/Customer/Cart/RazorpayCheckOut";
 
-                                handler: function (response) {
-                                var f = document.createElement("form");
-                                f.method = "POST";
-                                f.action = "/Customer/Cart/RazorpayCheckOut";
+                                        var existingInputs = document.querySelectorAll('#paymentForm input, #paymentForm select');
+                                        existingInputs.forEach(function (input) {
+                                            var copy = document.createElement("input");
+                                            copy.type = "hidden";
+                                            copy.name = input.name;
+                                            copy.value = input.value;
+                                            f.appendChild(copy);
+                                        });
 
-                                var existingInputs = document.querySelectorAll('#paymentForm input, #paymentForm select');
-                                existingInputs.forEach(function (input) {
-                                var copy = document.createElement("input");
-                                copy.type = "hidden";
-                                copy.name = input.name;
-                                copy.value = input.value;
-                                f.appendChild(copy);
-                                });
+                                        var p = document.createElement("input");
+                                        p.type = "hidden";
+                                        p.name = "transactionId";
+                                        p.value = response.razorpay_payment_id;
+                                        f.appendChild(p);
 
-                                var p = document.createElement("input");
-                                p.type = "hidden";
-                                p.name = "transactionId";
-                                p.value = response.razorpay_payment_id;
-                                f.appendChild(p);
-
-                                document.body.appendChild(f);
-                                f.submit();
-                                },
-                                modal: {
-                                ondismiss: function () {
-                                alert("Payment cancelled.");
-                                }
-                                },
-                                theme: { color: "#28a745" }
+                                        document.body.appendChild(f);
+                                        f.submit();
+                                    },
+                                    modal: {
+                                        ondismiss: function () {
+                                            alert("Payment cancelled.");
+                                        }
+                                    },
+                                    theme: { color: "#28a745" }
                                 };
 
                                 document.getElementById("btnRazorpay").addEventListener("click", function () {
-                                var rzp = new Razorpay(rzpOptions);
-                                rzp.open();
+                                    var rzp = new Razorpay(rzpOptions);
+                                    rzp.open();
                                 });
                             </script>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

@@ -1,0 +1,87 @@
+﻿@model IEnumerable<Ecomm_project_1.Models.ViewModels.TopUserVM>
+
+<div class="container mt-4">
+    <div class="row pt-4 pb-3">
+        <div class="col-6">
+            <h2 class="text-primary">Monthly Top Users</h2>
+        </div>
+    </div>
+    <hr />
+
+    <form method="get" asp-action="MonthlyTopUsers" class="row g-3 align-items-center mb-4">
+        <div class="col-auto">
+            <label for="month" class="col-form-label fw-bold">Select Month:</label>
+        </div>
+        <div class="col-auto">
+            <select name="month" id="month" class="form-select">
+                @for (int i = 1; i <= 12; i++)
+                {
+                    if (ViewBag.SelectedMonth == i)
+                    {
+                        <option value="@i" selected>@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+                    }
+                    else
+                    {
+                        <option value="@i">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-auto">
+            <label for="year" class="col-form-label fw-bold">Select Year:</label>
+        </div>
+        <div class="col-auto">
+            <select name="year" id="year" class="form-select">
+                @for (int i = DateTime.Now.Year; i >= 2020; i--)
+                {
+                    if (ViewBag.SelectedYear == i)
+                    {
+                        <option value="@i" selected>@i</option>
+                    }
+                    else
+                    {
+                        <option value="@i">@i</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </form>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Total Spent</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.Name</td>
+                        <td>@user.Email</td>
+                        <td>@user.PhoneNumber</td>
+                        <td>@user.TotalSpent.ToString("C")</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center">No users found for this month.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

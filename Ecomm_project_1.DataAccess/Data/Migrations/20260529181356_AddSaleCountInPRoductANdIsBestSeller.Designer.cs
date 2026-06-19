@@ -4,6 +4,7 @@ using Ecomm_project_1.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ecomm_project_1.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260529181356_AddSaleCountInPRoductANdIsBestSeller")]
+    partial class AddSaleCountInPRoductANdIsBestSeller
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,30 +253,6 @@ namespace Ecomm_project_1.DataAccess.Migrations
                     b.HasIndex("CoverTypeID");
 
                     b.ToTable("products");
-                });
-
-            modelBuilder.Entity("Ecomm_project_1.Models.SharedCart", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("ShoppingCartId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("ShoppingCartId");
-
-                    b.ToTable("SharedCarts");
                 });
 
             modelBuilder.Entity("Ecomm_project_1.Models.ShoppingCart", b =>
@@ -585,25 +564,6 @@ namespace Ecomm_project_1.DataAccess.Migrations
                     b.Navigation("catagory");
 
                     b.Navigation("coverType");
-                });
-
-            modelBuilder.Entity("Ecomm_project_1.Models.SharedCart", b =>
-                {
-                    b.HasOne("Ecomm_project_1.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany()
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ecomm_project_1.Models.ShoppingCart", "ShoppingCart")
-                        .WithMany()
-                        .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-
-                    b.Navigation("ShoppingCart");
                 });
 
             modelBuilder.Entity("Ecomm_project_1.Models.ShoppingCart", b =>

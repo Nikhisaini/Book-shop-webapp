@@ -43,23 +43,34 @@ namespace Ecomm_project_1.Areas.Customer.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)(User.Identity);
             var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
             if (claims == null)
             {
                 shoppingCartVM = new ShoppingCartVM()
                 {
-                    ListCart = new List<ShoppingCart>()
+                    ListCart = new List<ShoppingCart>(),
+                    SharedCarts = new List<SharedCart>() 
                 };
                 return View(shoppingCartVM);
             }
+
             var count = _unitOfWork.shoppingCart.GetAll(sc => sc.ApplicationUserId == claims.Value).ToList().Count;
             HttpContext.Session.SetInt32(SD.Ss_CartSessionCount, count);
+
             shoppingCartVM = new ShoppingCartVM()
             {
                 ListCart = _unitOfWork.shoppingCart.GetAll(sc => sc.ApplicationUserId == claims.Value, includeProperties: "product"),
+
+                SharedCarts = _unitOfWork.sharedCart.GetAll(
+                    sc => sc.ApplicationUserId == claims.Value,
+                    includeProperties: "ShoppingCart,ShoppingCart.product,ShoppingCart.applicationUser"),
+
                 OrderHeader = new OrderHeader()
             };
+
             shoppingCartVM.OrderHeader.OrderTotal = 0;
             shoppingCartVM.OrderHeader.applicationUser = _unitOfWork.applicationUser.FirstOrDefault(au => au.Id == claims.Value);
+
             foreach (var list in shoppingCartVM.ListCart)
             {
                 list.Price = SD.GetPriceBasedOnOuentity(list.Count, list.product.Price, list.product.Price50, list.product.Price100);
@@ -69,6 +80,7 @@ namespace Ecomm_project_1.Areas.Customer.Controllers
                     list.product.Description = list.product.Description.Substring(0, 99) + "....";
                 }
             }
+
             if (!IsEmailConfirm)
             {
                 ViewBag.EmailMessage = "Email Has been sent Kindly Verify your email!";
@@ -80,8 +92,11 @@ namespace Ecomm_project_1.Areas.Customer.Controllers
                 ViewBag.EmailMessage = "Email Must be Confirm Authorize Customer";
                 ViewBag.EmailCSS = "text-danger";
             }
+
             return View(shoppingCartVM);
         }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Index")]
@@ -139,6 +154,94 @@ namespace Ecomm_project_1.Areas.Customer.Controllers
             HttpContext.Session.SetString("SelectedCartIds", selectedIdsString);
             return RedirectToAction(nameof(summary));
         }
+
+
+        [HttpPost]
+        public IActionResult ShareCart([FromBody] List<string> userEmails)
+        {
+            var claimsIdentity = (ClaimsIdentity)(User.Identity);
+            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (claims == null) return Json(new { success = false, message = "Please login to share." });
+            if (userEmails == null || !userEmails.Any()) return Json(new { success = false, message = "No emails provided." });
+
+            var myCartItems = _unitOfWork.shoppingCart.GetAll(u => u.ApplicationUserId == claims.Value).ToList();
+
+            if (!myCartItems.Any()) return Json(new { success = false, message = "Your cart is empty." });
+
+            int addedCount = 0;
+
+            foreach (var email in userEmails)
+            {
+                var invitedUser = _unitOfWork.applicationUser.FirstOrDefault(u => u.Email == email);
+
+                if (invitedUser != null && invitedUser.Id != claims.Value)
+                {
+                    foreach (var item in myCartItems)
+                    {
+                        var alreadyShared = _unitOfWork.sharedCart
+                            .FirstOrDefault(s => s.ShoppingCartId == item.Id && s.ApplicationUserId == invitedUser.Id);
+                        if (alreadyShared == null)
+                        {
+                            _unitOfWork.sharedCart.Add(new SharedCart
+                            {
+                                ShoppingCartId = item.Id,
+                                ApplicationUserId = invitedUser.Id
+                            });
+                            addedCount++;
+                        }
+                    }
+                }
+            }
+            _unitOfWork.save();
+            return Json(new { success = true, message = $"Cart shared successfully!" });
+        }
+        [HttpGet]
+        public IActionResult GetSharedUsers()
+        {
+            var claimsIdentity = (ClaimsIdentity)(User.Identity);
+            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            if (claims == null) return Json(new { success = false });
+
+            var hostCartItemIds = _unitOfWork.shoppingCart
+                .GetAll(u => u.ApplicationUserId == claims.Value).Select(c => c.Id).ToList();
+
+            var guestUserIds = _unitOfWork.sharedCart
+                .GetAll(s => hostCartItemIds.Contains(s.ShoppingCartId))
+                .Select(s => s.ApplicationUserId).Distinct().ToList();
+
+            var sharedEmails = _unitOfWork.applicationUser
+                .GetAll(u => guestUserIds.Contains(u.Id)).Select(u => u.Email).ToList();
+
+            return Json(new { success = true, emails = sharedEmails });
+        }
+
+        [HttpPost]
+        public IActionResult RemoveSharedUser([FromBody] string email)
+        {
+            var claimsIdentity = (ClaimsIdentity)(User.Identity);
+            var claims = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            if (claims == null) return Json(new { success = false, message = "Not logged in" });
+
+            var guestUser = _unitOfWork.applicationUser.FirstOrDefault(u => u.Email == email);
+            if (guestUser == null) return Json(new { success = false, message = "User not found" });
+
+            var hostCartItemIds = _unitOfWork.shoppingCart
+                .GetAll(u => u.ApplicationUserId == claims.Value).Select(c => c.Id).ToList();
+
+            var sharedRecordsToRemove = _unitOfWork.sharedCart
+                .GetAll(s => hostCartItemIds.Contains(s.ShoppingCartId) && s.ApplicationUserId == guestUser.Id).ToList();
+
+            foreach (var record in sharedRecordsToRemove)
+            {
+                _unitOfWork.sharedCart.Remove(record);
+            }
+
+            if (sharedRecordsToRemove.Any()) _unitOfWork.save();
+
+            return Json(new { success = true, message = "User removed from group order." });
+        }
+
         public IActionResult plus(int id)
         {
             var cart = _unitOfWork.shoppingCart.Get(id);
@@ -292,7 +395,7 @@ namespace Ecomm_project_1.Areas.Customer.Controllers
                 if (charge.BalanceTransactionId == null)
                     shoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatusRejected;
                 else
-                    shoppingCartVM.OrderHeader.TransectionId = charge.BalanceTransactionId;
+                    shoppingCartVM.OrderHeader.TransectionId = charge.Id;
                 if (charge.Status.ToLower() == "succeeded")
                 {
                     shoppingCartVM.OrderHeader.OrderStatus = SD.OrderStatusApproved;
@@ -366,6 +469,12 @@ namespace Ecomm_project_1.Areas.Customer.Controllers
                 _unitOfWork.orderDetail.Add(orderDetail);
 
             }
+            // 10% discount then 5% GST on discounted amount
+            double discount = Math.Round(shoppingCartVM.OrderHeader.OrderTotal * 0.10, 2);
+            double discountedTotal = shoppingCartVM.OrderHeader.OrderTotal - discount;
+            double gst = Math.Round(discountedTotal * 0.05, 2);
+            shoppingCartVM.OrderHeader.OrderTotal = Math.Round(discountedTotal + gst, 2);
+
             _unitOfWork.save();
             //Remove From ShoppingCart
             _unitOfWork.shoppingCart.RemoveRange(shoppingCartVM.ListCart);
@@ -444,10 +553,11 @@ namespace Ecomm_project_1.Areas.Customer.Controllers
                    </div>";
                 try
                 {
-                    await _twilioService.SendOrderConfirmationWhatsAppAsync(orderHeader.PhoneNumber, id, customerName, productNames);
                     await _twilioService.SendOrderConfirmationSmsAsync(orderHeader.PhoneNumber, id, customerName, productNames);
                     await _twilioService.MakeOrderConfirmationCallAsync(orderHeader.PhoneNumber, id, customerName, productNames);
                     await _emailSender.SendEmailAsync(orderHeader.applicationUser.Email, $"Order Confirmed #{id}", emailHtml);
+                    await _twilioService.SendOrderConfirmationWhatsAppAsync(orderHeader.PhoneNumber, id, customerName, productNames);
+
                 }
                 catch (Exception ex)
                 {

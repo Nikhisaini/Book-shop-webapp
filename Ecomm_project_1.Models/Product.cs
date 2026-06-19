@@ -39,5 +39,9 @@ namespace Ecomm_project_1.Models
         [Display(Name = "CoverType")]
         public int CoverTypeID { get; set; }
         public CoverType coverType { get; set; }
+        public int SalesCount { get; set; } = 0;
+
+        // 2. Admin override to force a book to be a bestseller
+        public bool IsBestseller { get; set; } = false;
     }
 }

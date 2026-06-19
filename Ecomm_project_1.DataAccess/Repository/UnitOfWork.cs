@@ -20,6 +20,7 @@ namespace Ecomm_project_1.DataAccess.Repository
             shoppingCart = new ShoppingCartRepository(context);
             orderDetail = new OrderDetailRepository(context);
             orderHeader = new OrderHeaderRepository(context);
+            sharedCart = new SharedCartRepository(context);
         }
         public IApplicationUserRepository applicationUser { private set; get; }
         public IShoppingCartRepository shoppingCart { private set; get; }
@@ -30,6 +31,7 @@ namespace Ecomm_project_1.DataAccess.Repository
         public ICategoryRepository category { private set; get; }
 
         public ICoverTypeRepository coverType { private set; get; }
+        public ISharedCartRepository sharedCart { private set; get; }
 
         public void save()
         {

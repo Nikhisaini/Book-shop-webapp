@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Previous Orders";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary mb-4" style="color: #c96435 !important;">Your Previous Orders</h2>
+
+    <table id="tblPreviousOrders" class="table table-bordered table-striped" style="width:100%">
+        <thead class="table-dark">
+            <tr>
+                <th>Order ID</th>
+                <th>Name</th>
+                <th>State</th>
+                <th>Product Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section Scripts {
+    <script src="~/js/previousOrders.js"></script>
+}

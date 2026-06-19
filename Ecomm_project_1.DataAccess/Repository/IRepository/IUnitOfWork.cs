@@ -14,6 +14,7 @@ namespace Ecomm_project_1.DataAccess.Repository.IRepository
         IShoppingCartRepository shoppingCart  { get; }
         IOrderDetailRepository orderDetail { get; }
         IOrderHeaderRepository orderHeader { get; }
+        ISharedCartRepository sharedCart { get; }
         void save();
     }
 }

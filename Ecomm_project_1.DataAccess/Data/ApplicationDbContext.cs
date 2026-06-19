@@ -14,5 +14,6 @@ namespace Ecomm_project_1.DataAccess.Data
         public DbSet<ShoppingCart> shoppingCarts { get; set; }
         public DbSet<OrderHeader> orderHeaders { get; set; }
         public DbSet<OrderDetail> orderDetails { get; set; }
+        public DbSet<SharedCart> SharedCarts { get; set; }
     }
 }

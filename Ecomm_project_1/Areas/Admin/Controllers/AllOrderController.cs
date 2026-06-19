@@ -4,6 +4,7 @@ using Ecomm_project_1.Models.ViewModels;
 using Ecomm_project_1.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 
 namespace Ecomm_project_1.Areas.Admin.Controllers
 {
@@ -29,6 +30,7 @@ namespace Ecomm_project_1.Areas.Admin.Controllers
         {
             return View();
         }
+        [AllowAnonymous]
         public IActionResult Details(int id)
         {
             var orderVM = new OrderDetailVM
@@ -36,7 +38,6 @@ namespace Ecomm_project_1.Areas.Admin.Controllers
                 OrderHeader = _unitOfWork.orderHeader.FirstOrDefault(u => u.Id == id, includeProperties: "applicationUser"),
                 OrderDetails = _unitOfWork.orderDetail.GetAll(u => u.OrderHeaderId == id, includeProperties: "product")
             };
-
             return View(orderVM);
         }
         public IActionResult Cancel(int id)
@@ -46,9 +47,31 @@ namespace Ecomm_project_1.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
+            // --- STRIPE REFUND LOGIC ---
+            // Only attempt a refund if the payment was actually approved
+            if (orderHeader.PaymentStatus == SD.PaymentStatusApproved)
+            {
+                var options = new RefundCreateOptions
+                {
+                    Reason = RefundReasons.RequestedByCustomer,
+                    Charge = orderHeader.TransectionId // Make sure this matches your DB column name
+                };
+
+                var service = new RefundService();
+                Refund refund = service.Create(options);
+
+                // Update payment status to refunded
+                orderHeader.OrderStatus = SD.OrderStatusRefunded;
+                orderHeader.PaymentStatus = SD.PaymentStatusRefunded;
+            }
+
+            // Update order status to cancelled for all cancelled orders
             orderHeader.OrderStatus = SD.OrderStatusCancelled;
+
             _unitOfWork.orderHeader.Update(orderHeader);
             _unitOfWork.save();
+
             return RedirectToAction("Details", new { id = id });
         }
 

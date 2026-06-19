@@ -1,4 +1,4 @@
-using Ecomm_project_1.DataAccess;
+    using Ecomm_project_1.DataAccess;
 using Ecomm_project_1.DataAccess.Data;
 using Ecomm_project_1.DataAccess.Repository;
 using Ecomm_project_1.DataAccess.Repository.IRepository;
@@ -86,7 +86,7 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 app.UseSession();
 app.UseRouting();

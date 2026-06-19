@@ -2,188 +2,241 @@
 
 @{
     ViewData["Title"] = "KitabGhar – Punjabi Bookstore";
-    var bestSellers = Model.Take(12).ToList();
-    var newArrivals = Model.Skip(12).Take(8).ToList();
-
-    // NEW: Safely get the counts dictionary, or make an empty one if it's null
-    var catCounts = ViewBag.CategoryCounts as Dictionary<string, int> ?? new Dictionary<string, int>();
     
-    // Keep your active category logic
+    // Safely retrieve the lists from the Controller
+    var bestSellers = ViewBag.BestSellers as List<Ecomm_project_1.Models.Product> ?? new List<Ecomm_project_1.Models.Product>();
+    var newArrivals = ViewBag.NewArrivals as List<Ecomm_project_1.Models.Product> ?? new List<Ecomm_project_1.Models.Product>();
+
+    // Retrieve category counts
+    var catCounts = ViewBag.CategoryCounts as Dictionary<string, int> ?? new Dictionary<string, int>();
     var activeCategory = Context.Request.Query["category"].ToString();
 }
+
 <div class="is-home-page">
   
-<!-- PROMO STRIP -->
-<div class="promo-strip">
-    <div class="promo-item">📦 <strong>Free Shipping</strong> on orders over ₹499</div>
-    <div class="promo-dot"></div>
-    <div class="promo-item">🔄 <strong>Easy Returns</strong> within 30 days</div>
-    <div class="promo-dot"></div>
-    <div class="promo-item">🎁 <strong>Gift Wrapping</strong> available</div>
-    <div class="promo-dot"></div>
-    <div class="promo-item">⚡ <strong>Same Day Dispatch</strong> before 2 PM</div>
-</div>
-
-<!-- CATEGORIES -->
-<div class="section">
-    <div class="section-header">
-        <h2 class="section-title">Browse by <span>Category</span></h2>
-    </div>
-    <div class="categories-grid">
-        <a asp-action="Index" asp-route-category="Poetry" class="cat-card">
-            <div class="cat-icon">📜</div>
-            <div class="cat-name">Poetry</div>
-                <div class="cat-count">@(catCounts.ContainsKey("Poetry") ? catCounts["Poetry"] : 0) titles</div>
-        </a>
-        <a asp-action="Index" asp-route-category="Novel" class="cat-card">
-            <div class="cat-icon">📖</div>
-            <div class="cat-name">Novel</div>
-                <div class="cat-count">@(catCounts.ContainsKey("Novel") ? catCounts["Novel"] : 0) titles</div>
-        </a>
-        <a asp-action="Index" asp-route-category="History" class="cat-card">
-            <div class="cat-icon">🏛️</div>
-            <div class="cat-name">History</div>
-                <div class="cat-count">@(catCounts.ContainsKey("History") ? catCounts["History"] : 0) titles</div>
-        </a>
-        <a asp-action="Index" asp-route-category="Spirituality" class="cat-card">
-            <div class="cat-icon">🌿</div>
-            <div class="cat-name">Spirituality</div>
-                <div class="cat-count">@(catCounts.ContainsKey("Spirituality") ? catCounts["Spirituality"] : 0) titles</div>
-        </a>
-        <a asp-action="Index" asp-route-category="Drama" class="cat-card">
-            <div class="cat-icon">🎭</div>
-            <div class="cat-name">Drama</div>
-                <div class="cat-count">@(catCounts.ContainsKey("Drama") ? catCounts["Drama"] : 0) titles</div>
-        </a>
-            <a asp-action="Index" asp-route-category="Motivation" class="cat-card">
-            <div class="cat-icon">📈</div>
-            <div class="cat-name">Motivation</div>
-                <div class="cat-count">@(catCounts.ContainsKey("Motivation") ? catCounts["Motivation"] : 0) titles</div>
-        </a>
-    </div>
-</div>
-
-<!-- BESTSELLERS SECTION -->
-<div class="section">
-    <div class="section-header">
-        <h2 class="section-title">Bestselling <span>Books</span></h2>
-        <a asp-action="Index" class="see-all">View all →</a>
+    <div class="promo-strip">
+        <div class="promo-item">📦 <strong>Free Shipping</strong> on orders over ₹499</div>
+        <div class="promo-dot"></div>
+        <div class="promo-item">🔄 <strong>Easy Returns</strong> within 30 days</div>
+        <div class="promo-dot"></div>
+        <div class="promo-item">🎁 <strong>Gift Wrapping</strong> available</div>
+        <div class="promo-dot"></div>
+        <div class="promo-item">⚡ <strong>Same Day Dispatch</strong> before 2 PM</div>
     </div>
 
-    <div class="carousel-wrap" id="carousel1">
-        <button class="carousel-btn prev" onclick="moveCarousel('carousel1', -1)">&#8249;</button>
-        <div class="carousel-track-container">
-            <div class="carousel-track" id="carousel1-track">
-                @foreach (var product in bestSellers)
-                {
-                    <div class="book-card">
-                        <div class="book-cover">
-                            @if (!string.IsNullOrEmpty(product.ImageUrl))
-                            {
-                                <img src="@product.ImageUrl" alt="@product.Title" />
-                            }
-                            else
-                            {
-                                <div class="book-cover-placeholder">@product.Title</div>
-                            }
-                            <div class="bestseller-tag">BESTSELLER</div>
-                            @{
-                                int discountPct = product.ListPrice > 0
-                                    ? (int)Math.Round((1 - (double)product.Price100 / product.ListPrice) * 100)
-                                    : 0;
-                            }
-                            @if (discountPct > 0)
-                            {
-                                <div class="discount-tag">@discountPct%<br />OFF</div>
-                            }
-                        </div>
-                        <div class="book-info">
-                            <div class="book-title">@product.Title</div>
-                            <div class="book-author">@product.Author</div>
-                            <div class="stars">★★★★★ <span class="review-count">(Reviews)</span></div>
-                            <div class="book-pricing">
-                                <span class="price-now">₹@product.Price100.ToString("0")</span>
-                                <span class="price-was">₹@product.ListPrice.ToString("0")</span>
-                            </div>
-                            <a asp-action="Details" asp-route-id="@product.Id" class="btn-details">View Details</a>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-        <button class="carousel-btn next" onclick="moveCarousel('carousel1', 1)">&#8250;</button>
-    </div>
-    <div class="carousel-dots" id="carousel1-dots">
-        <!-- Dots will be generated by your script -->
-    </div>
-</div>
-<!-- NEW ARRIVALS CAROUSEL -->
-@if (newArrivals.Any())
-{
-    <div class="section new-arrivals-section">
+    <div class="section">
         <div class="section-header">
-            <h2 class="section-title">New <span>Arrivals</span></h2>
-            <a asp-action="Index" class="see-all">See all new →</a>
+            <h2 class="section-title">Browse by <span>Category</span></h2>
         </div>
-
-        <div class="carousel-wrap" id="carousel2">
-            <button class="carousel-btn prev" onclick="moveCarousel('carousel2', -1)">&#8249;</button>
-            
-            <div class="carousel-track-container">
-                <div class="carousel-track" id="carousel2-track">
-                    @foreach (var product in newArrivals)
-                    {
-                        <div class="book-card">
-                            <div class="book-cover">
-                                @if (!string.IsNullOrEmpty(product.ImageUrl))
-                                {
-                                    <img src="@product.ImageUrl" alt="@product.Title" />
-                                }
-                                else
-                                {
-                                    <div class="book-cover-placeholder">@product.Title</div>
-                                }
-                                <div class="new-tag">NEW</div>
-                            </div>
-                            <div class="book-info">
-                                <div class="book-title">@product.Title</div>
-                                <div class="book-author">@product.Author</div>
-                                <div class="book-pricing">
-                                    <span class="price-now">₹@product.Price100.ToString("0")</span>
-                                    <span class="price-was">₹@product.ListPrice.ToString("0")</span>
-                                </div>
-                                <a asp-action="Details" asp-route-id="@product.Id" class="btn-details">View Details</a>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-
-            <button class="carousel-btn next" onclick="moveCarousel('carousel2', 1)">&#8250;</button>
-        </div>
-        
-        <div class="carousel-dots" id="carousel2-dots">
-            <!-- Dots generated by JS -->
+        <div class="categories-grid">
+            <a asp-action="Index" asp-route-category="Poetry" class="cat-card @(activeCategory == "Poetry" ? "active" : "")">
+                <div class="cat-icon">📜</div>
+                <div class="cat-name">Poetry</div>
+                <div class="cat-count">@(catCounts.ContainsKey("Poetry") ? catCounts["Poetry"] : 0) titles</div>
+            </a>
+            <a asp-action="Index" asp-route-category="Novel" class="cat-card @(activeCategory == "Novel" ? "active" : "")">
+                <div class="cat-icon">📖</div>
+                <div class="cat-name">Novel</div>
+                <div class="cat-count">@(catCounts.ContainsKey("Novel") ? catCounts["Novel"] : 0) titles</div>
+            </a>
+            <a asp-action="Index" asp-route-category="History" class="cat-card @(activeCategory == "History" ? "active" : "")">
+                <div class="cat-icon">🏛️</div>
+                <div class="cat-name">History</div>
+                <div class="cat-count">@(catCounts.ContainsKey("History") ? catCounts["History"] : 0) titles</div>
+            </a>
+            <a asp-action="Index" asp-route-category="Spirituality" class="cat-card @(activeCategory == "Spirituality" ? "active" : "")">
+                <div class="cat-icon">🌿</div>
+                <div class="cat-name">Spirituality</div>
+                <div class="cat-count">@(catCounts.ContainsKey("Spirituality") ? catCounts["Spirituality"] : 0) titles</div>
+            </a>
+            <a asp-action="Index" asp-route-category="Drama" class="cat-card @(activeCategory == "Drama" ? "active" : "")">
+                <div class="cat-icon">🎭</div>
+                <div class="cat-name">Drama</div>
+                <div class="cat-count">@(catCounts.ContainsKey("Drama") ? catCounts["Drama"] : 0) titles</div>
+            </a>
+            <a asp-action="Index" asp-route-category="Motivation" class="cat-card @(activeCategory == "Motivation" ? "active" : "")">
+                <div class="cat-icon">📈</div>
+                <div class="cat-name">Motivation</div>
+                <div class="cat-count">@(catCounts.ContainsKey("Motivation") ? catCounts["Motivation"] : 0) titles</div>
+            </a>
         </div>
     </div>
-}
-    <!-- All your home page code (Hero, Categories, Bestsellers) -->
+    @if (Model.Any())
+    {
+        <div class="section all-books-section">
+            <div class="section-header">
+                <h2 class="section-title">Explore <span>All Books</span></h2>
+                <a asp-action="Index" class="see-all">View all →</a>
+            </div>
+
+            <div class="carousel-wrap" id="carousel3">
+                <button class="carousel-btn prev" onclick="moveCarousel('carousel3', -1)">&#8249;</button>
+                <div class="carousel-track-container">
+                    <div class="carousel-track" id="carousel3-track">
+                        @foreach (var product in Model)
+                        {
+                            <div class="book-card">
+                                <div class="book-cover">
+                                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                    {
+                                        <img src="@product.ImageUrl" alt="@product.Title" />
+                                    }
+                                    else
+                                    {
+                                        <div class="book-cover-placeholder">@product.Title</div>
+                                    }
+                                    
+                                    @{
+                                        int discountPct = product.ListPrice > 0
+                                            ? (int)Math.Round((1 - (double)product.Price100 / product.ListPrice) * 100)
+                                            : 0;
+                                    }
+                                    @if (discountPct > 0)
+                                    {
+                                        <div class="discount-tag">@discountPct%<br />OFF</div>
+                                    }
+                                </div>
+                                <div class="book-info">
+                                    <div class="book-title">@product.Title</div>
+                                    <div class="book-author">@product.Author</div>
+                                    <div class="stars">★★★★★ <span class="review-count">(Reviews)</span></div>
+                                    <div class="book-pricing">
+                                        <span class="price-now">₹@product.Price100.ToString("0")</span>
+                                        <span class="price-was">₹@product.ListPrice.ToString("0")</span>
+                                    </div>
+                                    <a asp-action="Details" asp-route-id="@product.Id" class="btn-details">View Details</a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <button class="carousel-btn next" onclick="moveCarousel('carousel3', 1)">&#8250;</button>
+            </div>
+            <div class="carousel-dots" id="carousel3-dots"></div>
+        </div>
+    }
+
+    @if (bestSellers.Any())
+    {
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Bestselling <span>Books</span></h2>
+                <a asp-action="Index" class="see-all">View all →</a>
+            </div>
+
+            <div class="carousel-wrap" id="carousel1">
+                <button class="carousel-btn prev" onclick="moveCarousel('carousel1', -1)">&#8249;</button>
+                <div class="carousel-track-container">
+                    <div class="carousel-track" id="carousel1-track">
+                        @foreach (var product in bestSellers)
+                        {
+                            <div class="book-card">
+                                <div class="book-cover">
+                                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                    {
+                                        <img src="@product.ImageUrl" alt="@product.Title" />
+                                    }
+                                    else
+                                    {
+                                        <div class="book-cover-placeholder">@product.Title</div>
+                                    }
+                                    
+                                    @if (product.IsBestseller)
+                                    {
+                                        <div class="bestseller-tag" style="background-color: #d97706;">BESTSELLER</div>
+                                    }
+                                    @{
+                                        int discountPct = product.ListPrice > 0
+                                            ? (int)Math.Round((1 - (double)product.Price100 / product.ListPrice) * 100)
+                                            : 0;
+                                    }
+                                    @if (discountPct > 0)
+                                    {
+                                        <div class="discount-tag">@discountPct%<br />OFF</div>
+                                    }
+                                </div>
+                                <div class="book-info">
+                                    <div class="book-title">@product.Title</div>
+                                    <div class="book-author">@product.Author</div>
+                                    <div class="stars">★★★★★ <span class="review-count">(Reviews)</span></div>
+                                    <div class="book-pricing">
+                                        <span class="price-now">₹@product.Price100.ToString("0")</span>
+                                        <span class="price-was">₹@product.ListPrice.ToString("0")</span>
+                                    </div>
+                                    <a asp-action="Details" asp-route-id="@product.Id" class="btn-details">View Details</a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <button class="carousel-btn next" onclick="moveCarousel('carousel1', 1)">&#8250;</button>
+            </div>
+            <div class="carousel-dots" id="carousel1-dots"></div>
+        </div>
+    }
+
+    @if (newArrivals.Any())
+    {
+        <div class="section new-arrivals-section">
+            <div class="section-header">
+                <h2 class="section-title">New <span>Arrivals</span></h2>
+                <a asp-action="Index" class="see-all">See all new →</a>
+            </div>
+
+            <div class="carousel-wrap" id="carousel2">
+                <button class="carousel-btn prev" onclick="moveCarousel('carousel2', -1)">&#8249;</button>
+                <div class="carousel-track-container">
+                    <div class="carousel-track" id="carousel2-track">
+                        @foreach (var product in newArrivals)
+                        {
+                            <div class="book-card">
+                                <div class="book-cover">
+                                    @if (!string.IsNullOrEmpty(product.ImageUrl))
+                                    {
+                                        <img src="@product.ImageUrl" alt="@product.Title" />
+                                    }
+                                    else
+                                    {
+                                        <div class="book-cover-placeholder">@product.Title</div>
+                                    }
+                                    <div class="new-tag" style="background-color: #2563eb;">NEW</div>
+                                </div>
+                                <div class="book-info">
+                                    <div class="book-title">@product.Title</div>
+                                    <div class="book-author">@product.Author</div>
+                                    <div class="book-pricing">
+                                        <span class="price-now">₹@product.Price100.ToString("0")</span>
+                                        <span class="price-was">₹@product.ListPrice.ToString("0")</span>
+                                    </div>
+                                    <a asp-action="Details" asp-route-id="@product.Id" class="btn-details">View Details</a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <button class="carousel-btn next" onclick="moveCarousel('carousel2', 1)">&#8250;</button>
+            </div>
+            <div class="carousel-dots" id="carousel2-dots"></div>
+        </div>
+    }
+
+   
 </div>
+
 @section Scripts {
     <script>
         const carousels = {};
 
         function initCarousel(id) {
             const track = document.getElementById(id + '-track');
-            if (!track) return; // Safety check if carousel doesn't exist on page
+            if (!track) return;
 
             const cards = track.querySelectorAll('.book-card');
             if (cards.length === 0) return;
 
-            // Dynamically calculate width including margins/gaps
             const style = window.getComputedStyle(cards[0]);
             const margin = parseFloat(style.marginLeft) + parseFloat(style.marginRight);
-            const cardW = cards[0].offsetWidth + (margin || 16); 
+            const cardW = cards[0].offsetWidth + (margin || 16);
 
             const containerW = track.parentElement.offsetWidth;
             const visible = Math.max(1, Math.floor(containerW / cardW));
@@ -192,7 +245,6 @@
             
             carousels[id] = { current: 0, max: maxSlide, cardW, totalDots };
 
-            // Rebuild dots dynamically
             const dotsEl = document.getElementById(id + '-dots');
             if (dotsEl) {
                 dotsEl.innerHTML = '';
@@ -204,7 +256,6 @@
                 }
             }
             
-            // Reset position on resize to prevent alignment issues
             track.style.transform = `translateX(0px)`;
         }
 
@@ -231,17 +282,17 @@
             dots.forEach((d, i) => d.classList.toggle('active', i === active));
         }
 
-       
-
-        // Initialize BOTH carousels on load and resize[cite: 1]
+        // Initialize ALL 3 carousels on load and resize
         window.addEventListener('load', () => {
             initCarousel('carousel1');
             initCarousel('carousel2');
+            initCarousel('carousel3');
         });
 
         window.addEventListener('resize', () => {
             initCarousel('carousel1');
             initCarousel('carousel2');
+            initCarousel('carousel3');
         });
     </script>
 }

@@ -133,7 +133,7 @@
                         <span class="info-value">@Model.OrderHeader.Carrier</span>
                     </div>
                 }
-                @if (Model.OrderHeader.OrderStatus != "Cancelled")
+                @if (Model.OrderHeader.OrderStatus == "Approved" || Model.OrderHeader.OrderStatus == "Pending")
                 {
                     <a asp-action="Cancel" asp-route-id="@Model.OrderHeader.Id" class="btn-cancel">
                         Cancel Order

@@ -57,7 +57,7 @@ namespace Ecomm_project_1.Areas.Admin.Controllers
                 {
                     var fileName = Guid.NewGuid().ToString(); //genrate unique name for file 
                     var extension = Path.GetExtension(files[0].FileName);//grab orignal extension(.jpg,.png) of file
-                    var upload = Path.Combine(webRootPath,@"images\products");//save thie image in path we give
+                    var upload = Path.Combine(webRootPath,"images","products");//save thie image in path we give
                     if (productVM.product.Id != 0)//Edit case
                     {
                         var imageExists = _unitofwork.product.Get(productVM.product.Id).ImageUrl;//grab old image URl from database
@@ -75,7 +75,7 @@ namespace Ecomm_project_1.Areas.Admin.Controllers
                     {
                         files[0].CopyTo(fileStream);//copy data in file
                     }
-                    productVM.product.ImageUrl = @"\images\products\" + fileName + extension;//save image URL path in database
+                    productVM.product.ImageUrl = @"/images/products/" + fileName + extension;//save image URL path in database
                 }
                 else
                 {

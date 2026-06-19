@@ -33,7 +33,10 @@ namespace Ecomm_project_1.Utility
         //Payment Status
         public const string PaymentStatusPending = "Pending";
         public const string PaymentStatusApproved = "Approved";
+        public const string PaymentStatusRefunded = "Refunded";
         public const string PaymentStatusDelayPayment = "PaymentStatusDelay";
         public const string PaymentStatusRejected = "Rejected";
+        //gst
+        public const double GstRate = 0.05;
     }
 }
